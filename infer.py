@@ -1,7 +1,8 @@
+from flask import Flask, request, jsonify, app
 import os
-
 import torch
-from transformers import BertTokenizerFast
+from transformers import BertTokenizerFast, BertModel
+import numpy as np
 
 from model import BertCRFModel
 from train import Config
@@ -133,3 +134,38 @@ def infer(text):
 
     results = extract_results(text, [pred_tags], offset_mapping, config.id2label)
     return results
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        # 获取请求数据
+        data = request.json
+        if not data or 'text' not in data:
+            return jsonify({
+                'code': 400,
+                'message': 'missing "text" in request body'
+            }), 400
+
+        text = data['text']
+        if not isinstance(text, str) or len(text.strip()) == 0:
+            return jsonify({
+                'code': 400,
+                'message': 'input text is empty or invalid'
+            }), 400
+
+        results = infer(text)
+
+        return jsonify({
+            'code': 200,
+            'message': 'success',
+            'data': {
+                'text': text,
+                'results': results
+            }
+        })
+
+    except Exception as e:
+        return jsonify({
+            'code': 500,
+            'message': f'fail：{str(e)}'
+        }), 500
