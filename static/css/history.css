@@ -1,0 +1,182 @@
+/* ==================== 历史记录页面样式 ==================== */
+
+/* 统计卡片（横向布局，全宽） */
+.stats-grid-full {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card-lg {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-icon.blue { background: #dbeafe; color: var(--info); }
+.stat-icon.green { background: #d1fae5; color: var(--success); }
+.stat-icon.purple { background: #f3e8ff; color: #a855f7; }
+.stat-icon.cyan { background: #cffafe; color: #06b6d4; }
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-info .stat-label {
+    color: var(--gray-600);
+    font-size: 0.875rem;
+    text-align: left;
+}
+
+.stat-info .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    text-align: left;
+}
+
+.stat-info .stat-value.small {
+    font-size: 1.25rem;
+}
+
+.stat-info .stat-desc {
+    color: var(--gray-600);
+    font-size: 0.75rem;
+    text-align: left;
+    margin-top: 0.25rem;
+}
+
+/* 筛选区域 */
+.filter-section {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.filter-form {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.filter-select {
+    padding: 0.625rem 1rem;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* 历史记录部分 */
+.history-section {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-header h3 {
+    font-size: 1.25rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* 历史记录表格 */
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* 分页 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.page-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--gray-300);
+    background: white;
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--gray-800);
+    transition: all 0.2s;
+}
+
+.page-btn:hover {
+    background: var(--gray-50);
+}
+
+.page-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.page-ellipsis {
+    padding: 0.5rem;
+    color: var(--gray-600);
+}
+
+/* 响应式 */
+@media (max-width: 1024px) {
+    .stats-grid-full {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid-full {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-form {
+        flex-direction: column;
+    }
+    
+    .filter-select {
+        width: 100%;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+}
