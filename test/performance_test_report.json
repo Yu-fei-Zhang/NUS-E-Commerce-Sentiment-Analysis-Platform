@@ -1,0 +1,162 @@
+{
+  "inference_speed": {
+    "single_inference": {
+      "mean_ms": 12.109236717224121,
+      "median_ms": 10.999917984008789,
+      "std_ms": 2.863381133247336,
+      "min_ms": 9.508609771728516,
+      "max_ms": 20.00570297241211,
+      "p95_ms": 18.998229503631592,
+      "p99_ms": 20.000274181365967
+    },
+    "batch_inference": {
+      "mean_ms": 98.37280511856079,
+      "median_ms": 99.39920902252197,
+      "throughput": 325.29315354414246
+    }
+  },
+  "accuracy": {
+    "metrics": {
+      "micro_f1": 0.9847463639588507,
+      "precision": 0.9843971631205674,
+      "recall": 0.9850958126330731
+    },
+    "detailed_report": {
+      "ASP": {
+        "precision": 1.0,
+        "recall": 0.9971671388101983,
+        "f1-score": 0.9985815602836879,
+        "support": 706
+      },
+      "SENT_NEG": {
+        "precision": 0.9958847736625515,
+        "recall": 0.9918032786885246,
+        "f1-score": 0.9938398357289527,
+        "support": 488
+      },
+      "SENT_POS": {
+        "precision": 0.9090909090909091,
+        "recall": 0.9302325581395349,
+        "f1-score": 0.9195402298850575,
+        "support": 215
+      },
+      "micro avg": {
+        "precision": 0.9843971631205674,
+        "recall": 0.9850958126330731,
+        "f1-score": 0.9847463639588507,
+        "support": 1409
+      },
+      "macro avg": {
+        "precision": 0.9683252275844869,
+        "recall": 0.9730676585460859,
+        "f1-score": 0.9706538752992326,
+        "support": 1409
+      },
+      "weighted avg": {
+        "precision": 0.9847028495400074,
+        "recall": 0.9850958126330731,
+        "f1-score": 0.984878332733357,
+        "support": 1409
+      }
+    }
+  },
+  "memory": {
+    "total_params": 102274668,
+    "trainable_params": 102274668,
+    "model_size_mb": 390.1468963623047,
+    "inference_memory_mb": 0.0,
+    "peak_memory_mb": 0.032898902893066406
+  },
+  "robustness": {
+    "原始文本": {
+      "success": true,
+      "time_ms": 16.999006271362305,
+      "aspects_found": 2,
+      "sentiments_found": 3,
+      "text_length": 15
+    },
+    "短文本": {
+      "success": true,
+      "time_ms": 11.00301742553711,
+      "aspects_found": 0,
+      "sentiments_found": 0,
+      "text_length": 2
+    },
+    "长文本": {
+      "success": true,
+      "time_ms": 12.508630752563477,
+      "aspects_found": 10,
+      "sentiments_found": 15,
+      "text_length": 75
+    },
+    "特殊字符": {
+      "success": true,
+      "time_ms": 12.001276016235352,
+      "aspects_found": 2,
+      "sentiments_found": 3,
+      "text_length": 25
+    },
+    "数字混合": {
+      "success": true,
+      "time_ms": 10.99848747253418,
+      "aspects_found": 2,
+      "sentiments_found": 3,
+      "text_length": 21
+    },
+    "英文混合": {
+      "success": true,
+      "time_ms": 15.001296997070312,
+      "aspects_found": 2,
+      "sentiments_found": 3,
+      "text_length": 24
+    },
+    "空格文本": {
+      "success": true,
+      "time_ms": 16.999006271362305,
+      "aspects_found": 2,
+      "sentiments_found": 3,
+      "text_length": 19
+    },
+    "重复文本": {
+      "success": true,
+      "time_ms": 17.000675201416016,
+      "aspects_found": 2,
+      "sentiments_found": 0,
+      "text_length": 12
+    }
+  },
+  "edge_cases": {
+    "空文本": {
+      "success": true,
+      "result_count": 0
+    },
+    "单字": {
+      "success": true,
+      "result_count": 0
+    },
+    "纯标点": {
+      "success": true,
+      "result_count": 0
+    },
+    "超长文本": {
+      "success": true,
+      "result_count": 2
+    },
+    "纯数字": {
+      "success": true,
+      "result_count": 0
+    },
+    "纯英文": {
+      "success": true,
+      "result_count": 0
+    },
+    "特殊Unicode": {
+      "success": true,
+      "result_count": 2
+    },
+    "换行文本": {
+      "success": true,
+      "result_count": 2
+    }
+  }
+}

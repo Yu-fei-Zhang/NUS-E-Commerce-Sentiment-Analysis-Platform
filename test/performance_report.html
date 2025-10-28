@@ -1,0 +1,536 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Performance Analysis Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 60px 80px;
+            border-bottom: 4px solid #1e3c72;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            font-weight: 300;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            font-weight: 300;
+            margin-bottom: 25px;
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 30px;
+            font-size: 0.95em;
+            opacity: 0.85;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .header-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .content {
+            padding: 60px 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section-header {
+            border-left: 4px solid #2a5298;
+            padding-left: 20px;
+            margin-bottom: 35px;
+        }
+
+        .section-header h2 {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #1e3c72;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .section-header .section-subtitle {
+            font-size: 0.95em;
+            color: #7f8c8d;
+            font-weight: 400;
+        }
+
+        .metrics-grid {
+            display: grid;
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .metrics-grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .metrics-grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .metrics-grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        
+        @media (max-width: 1200px) {
+            .metrics-grid-3,
+            .metrics-grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .metrics-grid-2,
+            .metrics-grid-3,
+            .metrics-grid-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .metric-card {
+            background: white;
+            padding: 28px;
+            border-radius: 8px;
+            border: 1px solid #e1e8ed;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            border-color: #2a5298;
+            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .metric-label {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: 300;
+            color: #2c3e50;
+            line-height: 1;
+        }
+
+        .metric-unit {
+            font-size: 0.5em;
+            color: #95a5a6;
+            font-weight: 400;
+            margin-left: 4px;
+        }
+
+        .chart-container {
+            margin: 30px 0;
+            background: #fafbfc;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .chart-container img {
+            max-width: 100%;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 25px;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85em;
+            color: #5a6c7d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e1e8ed;
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f3f5;
+            color: #2c3e50;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .status-pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .summary-panel {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            margin-bottom: 50px;
+        }
+
+        .summary-panel h3 {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            font-size: 0.95em;
+            color: #5a6c7d;
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 40px 80px;
+            text-align: center;
+            border-top: 1px solid #e1e8ed;
+            color: #7f8c8d;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer p {
+            margin: 8px 0;
+            font-size: 0.9em;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #e1e8ed, transparent);
+            margin: 50px 0;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .metric-card {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>Model Performance Analysis Report</h1>
+                <div class="header-subtitle">BERT+CRF Aspect-Based Sentiment Analysis</div>
+                <div class="header-meta">
+                    <div class="header-meta-item">
+                        <span>Report Generated:</span>
+                        <span>2025-10-28 22:34:29</span>
+                    </div>
+                    <div class="header-meta-item">
+                        <span>Framework:</span>
+                        <span>PyTorch + Transformers</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="summary-panel"><h3>Executive Summary</h3><div class="summary-grid"><div>
+            <div class="summary-item">
+                <span class="summary-label">Average Inference Time</span>
+                <span class="summary-value">12.11 ms</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Model F1 Score</span>
+                <span class="summary-value">0.9847</span>
+            </div></div><div>
+            <div class="summary-item">
+                <span class="summary-label">Model Size</span>
+                <span class="summary-value">390.15 MB</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Robustness Tests Passed</span>
+                <span class="summary-value">8/8</span>
+            </div></div></div></div>
+            <div class="section"><div class="section-header"><h2>Inference Speed Performance</h2><div class="section-subtitle">Statistical analysis of algorithm inference latency across 100 samples</div></div><div class="metrics-grid metrics-grid-4">
+            <div class="metric-card">
+                <div class="metric-label">Mean Latency</div>
+                <div class="metric-value">12.11 <span class="metric-unit">ms</span></div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Median Latency</div>
+                <div class="metric-value">11.00 <span class="metric-unit">ms</span></div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">95th Percentile</div>
+                <div class="metric-value">19.00 <span class="metric-unit">ms</span></div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">99th Percentile</div>
+                <div class="metric-value">20.00 <span class="metric-unit">ms</span></div>
+            </div>
+            </div><div class="chart-container"><img src="inference_speed.png" alt="Inference Speed Analysis"></div></div>
+            <div class="section"><div class="section-header"><h2>Model Accuracy Metrics</h2><div class="section-subtitle">Evaluation metrics on test dataset using micro-averaging</div></div><div class="metrics-grid metrics-grid-3">
+                <div class="metric-card">
+                    <div class="metric-label">F1 Score</div>
+                    <div class="metric-value">0.9847</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Precision</div>
+                    <div class="metric-value">0.9844</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Recall</div>
+                    <div class="metric-value">0.9851</div>
+                </div>
+                </div><div class="chart-container"><img src="accuracy_metrics.png" alt="Model Accuracy Analysis"></div></div>
+            <div class="section"><div class="section-header"><h2>Memory Utilization</h2><div class="section-subtitle">Model size and runtime memory consumption analysis</div></div><div class="metrics-grid metrics-grid-4">
+            <div class="metric-card">
+                <div class="metric-label">Total Parameters</div>
+                <div class="metric-value">102,274,668 <span class="metric-unit"></span></div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Model Size</div>
+                <div class="metric-value">390.15 <span class="metric-unit">MB</span></div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Inference Memory</div>
+                <div class="metric-value">0.00 <span class="metric-unit">MB</span></div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-label">Peak Memory</div>
+                <div class="metric-value">0.03 <span class="metric-unit">MB</span></div>
+            </div>
+            </div></div>
+            <div class="section"><div class="section-header"><h2>Robustness Testing</h2><div class="section-subtitle">Model stability across diverse input scenarios</div></div><table><thead><tr><th>Test Scenario</th><th>Status</th><th>Latency (ms)</th><th>Output Details</th></tr></thead><tbody>
+            <tr>
+                <td><strong>Original Text</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>17.00</td>
+                <td>Aspects: 2, Sentiments: 3</td>
+            </tr>
+            
+            <tr>
+                <td><strong>Short Text</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>11.00</td>
+                <td>Aspects: 0, Sentiments: 0</td>
+            </tr>
+            
+            <tr>
+                <td><strong>Long Text</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>12.51</td>
+                <td>Aspects: 10, Sentiments: 15</td>
+            </tr>
+            
+            <tr>
+                <td><strong>Special Characters</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>12.00</td>
+                <td>Aspects: 2, Sentiments: 3</td>
+            </tr>
+            
+            <tr>
+                <td><strong>Number Mix</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>11.00</td>
+                <td>Aspects: 2, Sentiments: 3</td>
+            </tr>
+            
+            <tr>
+                <td><strong>English Mix</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>15.00</td>
+                <td>Aspects: 2, Sentiments: 3</td>
+            </tr>
+            
+            <tr>
+                <td><strong>Spaced Text</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>17.00</td>
+                <td>Aspects: 2, Sentiments: 3</td>
+            </tr>
+            
+            <tr>
+                <td><strong>Repeated Text</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>17.00</td>
+                <td>Aspects: 2, Sentiments: 0</td>
+            </tr>
+            </tbody></table><div class="chart-container"><img src="robustness_test.png" alt="Robustness Test Chart"></div></div>
+            <div class="section"><div class="section-header"><h2>Edge Case Testing</h2><div class="section-subtitle">Model behavior under boundary conditions and extreme inputs</div></div><p style="margin-bottom: 25px; color: #5a6c7d;"><strong>8</strong> out of <strong>8</strong> edge cases handled successfully</p><table><thead><tr><th>Test Scenario</th><th>Status</th><th>Details</th></tr></thead><tbody>
+            <tr>
+                <td><strong>Empty Text</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>Results: 0</td>
+            </tr>
+            
+            <tr>
+                <td><strong>Single Character</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>Results: 0</td>
+            </tr>
+            
+            <tr>
+                <td><strong>Pure Punctuation</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>Results: 0</td>
+            </tr>
+            
+            <tr>
+                <td><strong>Very Long Text</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>Results: 2</td>
+            </tr>
+            
+            <tr>
+                <td><strong>Pure Numbers</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>Results: 0</td>
+            </tr>
+            
+            <tr>
+                <td><strong>Pure English</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>Results: 0</td>
+            </tr>
+            
+            <tr>
+                <td><strong>Special Unicode</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>Results: 2</td>
+            </tr>
+            
+            <tr>
+                <td><strong>Newline Characters</strong></td>
+                <td><span class="status-badge status-pass">Pass</span></td>
+                <td>Results: 2</td>
+            </tr>
+            </tbody></table></div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-content">
+                <p><strong>BERT+CRF Aspect-Based Sentiment Analysis Model</strong></p>
+                <p>Performance Testing Framework | Automated Report Generation</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
