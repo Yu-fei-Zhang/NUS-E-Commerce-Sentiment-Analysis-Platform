@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sentiment Analysis System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="brand-icon">💬</div>
+                <span>Sentiment Analysis</span>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('main.home') }}" class="nav-link {% if request.endpoint == 'main.home' %}active{% endif %}">
+                    <span>🏠</span>
+                    <span>Home</span>
+                </a>
+                <a href="{{ url_for('main.single') }}" class="nav-link {% if request.endpoint == 'main.single' %}active{% endif %}">
+                    <span>✏️</span>
+                    <span>Single</span>
+                </a>
+                <a href="{{ url_for('main.batch') }}" class="nav-link {% if request.endpoint == 'main.batch' %}active{% endif %}">
+                    <span>📊</span>
+                    <span>Batch</span>
+                </a>
+                <a href="{{ url_for('main.history') }}" class="nav-link {% if request.endpoint == 'main.history' %}active{% endif %}">
+                    <span>📜</span>
+                    <span>History</span>
+                </a>
+                <a href="{{ url_for('main.logout') }}" class="nav-link">
+                    <span>🚪</span>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <div class="content-wrapper">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% if current_user.is_authenticated %}
+    <footer class="footer">
+        <p>© 2025 Sentiment Analysis System | Based on BERT+CRF Model</p>
+    </footer>
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

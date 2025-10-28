@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}History - Sentiment Analysis System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/history.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Analysis History</h1>
+        <p>View all historical analysis records and statistics</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid-full">
+        <div class="stat-card-lg">
+            <div class="stat-icon blue">📊</div>
+            <div class="stat-info">
+                <div class="stat-label">Total Analyses</div>
+                <div class="stat-value">{{ stats.total }}</div>
+                <div class="stat-desc">Cumulative history</div>
+            </div>
+        </div>
+
+        <div class="stat-card-lg">
+            <div class="stat-icon green">📈</div>
+            <div class="stat-info">
+                <div class="stat-label">This Month</div>
+                <div class="stat-value">{{ stats.monthly }}</div>
+                <div class="stat-desc">Current month statistics</div>
+            </div>
+        </div>
+
+        <div class="stat-card-lg">
+            <div class="stat-icon cyan">📅</div>
+            <div class="stat-info">
+                <div class="stat-label">Latest Analysis</div>
+                <div class="stat-value small">{{ stats.latest_date.strftime('%d/%m/%Y') if stats.latest_date else 'N/A' }}</div>
+                <div class="stat-desc">Last analysis time</div>
+            </div>
+        </div>
+
+        <div class="stat-card-lg">
+            <div class="stat-icon purple">🤖</div>
+            <div class="stat-info">
+                <div class="stat-label">Model Type</div>
+                <div class="stat-value small">BERT+CRF</div>
+                <div class="stat-desc">Deep learning model</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Area -->
+    <div class="filter-section">
+        <form class="filter-form" method="get">
+            <select name="type" class="filter-select" onchange="this.form.submit()">
+                <option value="all" {% if type_filter == 'all' %}selected{% endif %}>All Types</option>
+                <option value="single" {% if type_filter == 'single' %}selected{% endif %}>Single Analysis</option>
+                <option value="batch" {% if type_filter == 'batch' %}selected{% endif %}>Batch Analysis</option>
+            </select>
+
+            <select name="sentiment" class="filter-select" onchange="this.form.submit()">
+                <option value="all" {% if sentiment_filter == 'all' %}selected{% endif %}>All Sentiments</option>
+                <option value="正面" {% if sentiment_filter == '正面' %}selected{% endif %}>Positive</option>
+                <option value="负面" {% if sentiment_filter == '负面' %}selected{% endif %}>Negative</option>
+                <option value="中性" {% if sentiment_filter == '中性' %}selected{% endif %}>Neutral</option>
+            </select>
+        </form>
+    </div>
+
+    <!-- History Records Table -->
+    <div class="history-section">
+        <div class="section-header">
+            <h3>History Records</h3>
+            <div class="action-buttons">
+                <button onclick="exportRecords()" class="btn-icon">
+                    <span>📥</span>
+                    <span>Export</span>
+                </button>
+                <button onclick="clearAllRecords()" class="btn-icon danger">
+                    <span>🗑️</span>
+                    <span>Clear</span>
+                </button>
+            </div>
+        </div>
+
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th style="width: 120px;">Type</th>
+                    <th>Content/Filename</th>
+                    <th style="width: 120px;">Sentiment</th>
+                    <th style="width: 100px;">Count</th>
+                    <th style="width: 180px;">Time</th>
+                    <th style="width: 100px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for analysis in analyses %}
+                <tr>
+                    <td>
+                        <span class="badge badge-type">
+                            {% if analysis.analysis_type == 'single' %}Single{% else %}Batch{% endif %}
+                        </span>
+                    </td>
+                    <td class="comment-cell">
+                        {% if analysis.analysis_type == 'single' %}
+                            {{ analysis.content }}
+                        {% else %}
+                            {{ analysis.filename }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if analysis.sentiment %}
+                        <span class="badge badge-{{ analysis.sentiment }}">
+                            {% if analysis.sentiment == '正面' %}Positive
+                            {% elif analysis.sentiment == '负面' %}Negative
+                            {% else %}Neutral{% endif %}
+                        </span>
+                        {% else %}
+                        <span class="badge badge-中性">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if analysis.analysis_type == 'batch' %}
+                            {{ analysis.total_count }}
+                        {% else %}
+                            1
+                        {% endif %}
+                    </td>
+                    <td>{{ analysis.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>
+                        <button onclick="deleteRecord({{ analysis.id }})" class="btn-icon-sm" title="Delete">
+                            <span>🗑️</span>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        {% if pagination.pages > 1 %}
+        <div class="pagination">
+            {% if pagination.has_prev %}
+            <a href="{{ url_for('main.history', page=pagination.prev_num, type=type_filter, sentiment=sentiment_filter) }}"
+               class="page-btn">Previous</a>
+            {% endif %}
+
+            {% for page_num in range(1, pagination.pages + 1) %}
+                {% if page_num == pagination.page %}
+                <span class="page-btn active">{{ page_num }}</span>
+                {% elif page_num <= 3 or page_num > pagination.pages - 3 or (page_num >= pagination.page - 1 and page_num <= pagination.page + 1) %}
+                <a href="{{ url_for('main.history', page=page_num, type=type_filter, sentiment=sentiment_filter) }}"
+                   class="page-btn">{{ page_num }}</a>
+                {% elif page_num == 4 or page_num == pagination.pages - 3 %}
+                <span class="page-ellipsis">...</span>
+                {% endif %}
+            {% endfor %}
+
+            {% if pagination.has_next %}
+            <a href="{{ url_for('main.history', page=pagination.next_num, type=type_filter, sentiment=sentiment_filter) }}"
+               class="page-btn">Next</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/history.js') }}"></script>
+{% endblock %}
