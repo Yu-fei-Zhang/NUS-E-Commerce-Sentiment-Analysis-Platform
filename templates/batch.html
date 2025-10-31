@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Batch Analysis - Sentiment Analysis System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Batch Comment Analysis</h1>
+        <p>Upload CSV or Excel files to batch process comment data</p>
+    </div>
+
+    {% if not show_results %}
+    <!-- Upload Area -->
+    <div class="upload-section">
+        <div id="uploadArea" class="upload-area">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📁</div>
+            <p class="upload-text">Click or drag files here to upload</p>
+            <p class="upload-hint">Support CSV, Excel formats, max 16MB</p>
+            <div class="btn-upload">Select File</div>
+            <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display: none;">
+        </div>
+
+        <div id="loadingMessage" class="loading-message" style="display: none;">
+            <div class="spinner"></div>
+            <p>Analyzing, please wait...</p>
+        </div>
+    </div>
+    {% else %}
+    <!-- Analysis Results -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Total Comments</div>
+            <div class="stat-value">{{ analysis.total_count }}</div>
+        </div>
+
+        <div class="stat-card positive">
+            <div class="stat-label">Positive</div>
+            <div class="stat-value">{{ analysis.positive_count }}</div>
+            <div class="stat-percent">{{ "%.1f"|format(analysis.positive_count / analysis.total_count * 100) }}%</div>
+        </div>
+
+        <div class="stat-card negative">
+            <div class="stat-label">Negative</div>
+            <div class="stat-value">{{ analysis.negative_count }}</div>
+            <div class="stat-percent">{{ "%.1f"|format(analysis.negative_count / analysis.total_count * 100) }}%</div>
+        </div>
+
+        <div class="stat-card neutral">
+            <div class="stat-label">Neutral</div>
+            <div class="stat-value">{{ analysis.neutral_count }}</div>
+            <div class="stat-percent">{{ "%.1f"|format(analysis.neutral_count / analysis.total_count * 100) }}%</div>
+        </div>
+    </div>
+
+    <!-- Detailed Results Table -->
+    <div class="results-table">
+        <h3>Detailed Results (First 100)</h3>
+        <div class="batch-results-container">
+            {% for result in results[:100] %}
+            <div class="batch-result-item">
+                <div class="batch-result-header">
+                    <span class="result-number">{{ loop.index }}</span>
+                    <span class="badge badge-{{ result.sentiment }}">
+                        {% if result.sentiment == '正面' %}Positive
+                        {% elif result.sentiment == '负面' %}Negative
+                        {% else %}Neutral{% endif %}
+                    </span>
+                </div>
+                <div class="batch-comment">{{ result.content }}</div>
+                {% if result.aspect_sentiments %}
+                <div class="batch-aspects">
+                    {% for asp in result.aspect_sentiments %}
+                    <div class="batch-aspect-item">
+                        <span class="batch-aspect-label">{{ asp.aspect }}</span>
+                        <span class="batch-aspect-arrow">→</span>
+                        <span class="batch-aspect-sentiment sentiment-{{ asp.sentiment }}">
+                            {% if asp.sentiment == '正面' %}Positive
+                            {% elif asp.sentiment == '负面' %}Negative
+                            {% else %}Neutral{% endif %}
+                        </span>
+                        {% if asp.sentiment_words %}
+                        <span class="batch-sentiment-words">({{ asp.sentiment_words }})</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="margin-top: 2rem; text-align: center;">
+            <button onclick="location.href='{{ url_for('main.batch') }}'" class="btn-primary">
+                <span>🔄</span>
+                <span>Upload Again</span>
+            </button>
+            <button onclick="location.href='{{ url_for('main.history') }}'" class="btn-secondary">
+                <span>📜</span>
+                <span>View History</span>
+            </button>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/batch.js') }}"></script>
+{% endblock %}

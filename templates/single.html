@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Single Analysis - Sentiment Analysis System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Single Comment Analysis</h1>
+        <p>Input comment content to identify sentiment and key entities</p>
+    </div>
+
+    {% if not show_result %}
+    <!-- Input Form -->
+    <div class="result-card-simple">
+        <div class="comment-input-simple">
+            <label>Comment Content</label>
+            <textarea id="commentText" placeholder="Enter the comment to analyze..."></textarea>
+        </div>
+
+        <button id="analyzeBtn" class="btn-analyze">
+            <span>🔍</span>
+            <span>Analyze</span>
+        </button>
+
+        <div id="loadingMessage" class="loading-message" style="display: none;">
+            <div class="spinner"></div>
+            <p>Analyzing...</p>
+        </div>
+    </div>
+    {% else %}
+    <!-- Analysis Results -->
+    <div class="result-card">
+        <div class="comment-display">
+            <label>Review Content</label>
+            <div class="comment-text">{{ analysis.content }}</div>
+        </div>
+
+        <button id="analyzeBtn" class="btn-analyze" disabled>
+            <span>🔍</span>
+            <span>Analyze</span>
+        </button>
+
+        <!-- Aspect-Sentiment Results -->
+        <div id="aspectResults" class="aspect-results">
+            <!-- Results will be populated by JavaScript -->
+        </div>
+
+        <div class="result-actions">
+            <button onclick="location.href='{{ url_for('main.single') }}'" class="btn-primary">
+                <span>🔄</span>
+                <span>Analyze Again</span>
+            </button>
+            <button onclick="location.href='{{ url_for('main.history') }}'" class="btn-secondary">
+                <span>📜</span>
+                <span>View History</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Hidden data for JavaScript -->
+    <script>
+        window.analysisData = {
+            content: {{ analysis.content|tojson }},
+            sentiment: "{{ analysis.sentiment }}",
+            aspectSentiments: {{ analysis.aspect_sentiments|tojson }}
+        };
+    </script>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/single.js') }}"></script>
+{% endblock %}
